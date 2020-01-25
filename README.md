@@ -9,3 +9,6 @@ A Subsystem that implements the REV Color Sensor V3 for use in the 2020 FRC Game
 
 
 
+## What does it do?
+
+Version 1: The motor spins at 1.5 speed. When the color sensor detects the provided color (given by a preprogrammed constant), the motor will break.
