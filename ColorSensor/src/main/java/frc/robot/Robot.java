@@ -25,39 +25,23 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.*;
 
+
 public class Robot extends TimedRobot {
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
-  private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-  private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-  private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
-  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-  private final ColorMatch m_colorMatcher = new ColorMatch();
-  private static final int device_ID = 3;
-  private CANSparkMax motor = new CANSparkMax(device_ID, MotorType.kBrushless);
-  private CANEncoder encoder = motor.getEncoder();
-  final String givenColor = "Red";
-  String colorString;
-  Color detectedColor;
-  ColorMatchResult match;
+  //Declare the Color Constants as double arrays
+  private final double[] red = new double[]{0.143, 0.427, 0.429};
+  private final double[] blue = new double[]{0.197, 0.561, 0.240};
+  private final double[] green = new double[]{0.561, 0.232, 0.114};
+  private final double[] yellow = new double[]{0.361, 0.524, 0.113};
+
+  //Declare the Xbox Controller
+  XboxController m_controller = XboxController(0);
 
   @Override
-  public void robotInit() {
-   m_colorMatcher.addColorMatch(kBlueTarget);
-    m_colorMatcher.addColorMatch(kGreenTarget);
-    m_colorMatcher.addColorMatch(kRedTarget);
-    m_colorMatcher.addColorMatch(kYellowTarget);    
-    motor.restoreFactoryDefaults();
+  public void robotInit()//Intialize the Spinner
+  //@param color array for RGBY(NOT RWBY, Cutler!), i2c port, given color, and device ID;
+  ColorSpinner color = new ColorSpinner(red,blue,green,yellow, I2C.Port.kOnboard, "Red", 4 );
   }
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
   @Override
   public void robotPeriodic() {
   }
@@ -67,55 +51,21 @@ public class Robot extends TimedRobot {
    
   }
 
-  /**
-   * This function is called periodically during autonomous.
-   */
   @Override
   public void autonomousPeriodic() {
   
   }
 
-  /**
-   * This function is called periodically during operator control.
-   */
   @Override
   public void teleopPeriodic() {
-
-     while(true)
-     {
-       detectedColor = m_colorSensor.getColor();
-     match = m_colorMatcher.matchClosestColor(detectedColor);
- 
-    if (match.color == kBlueTarget) {
-      colorString = "Blue";
-    } else if (match.color == kRedTarget) {
-      colorString = "Red";
-    } else if (match.color == kGreenTarget) {
-      colorString = "Green";
-    } else if (match.color == kYellowTarget) {
-      colorString = "Yellow";
-    } else {
-      colorString = "Unknown";
+    
+    if(m_controller.getBButtonPressed())
+    {
+      
     }
-    motor.set(0.1);
-    if(colorString.equals(givenColor))
-  {
-    System.out.println("Bruh");
-    motor.set(0);
-    break;
-  }
-     }
-      SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);
-
+    
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
   @Override
   public void testPeriodic() {
   }
